@@ -1,0 +1,7 @@
+services:
+  snell:
+    container_name: snell
+    build:
+      context: .
+    ports:
+      - 6333:6333
