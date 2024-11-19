@@ -19,5 +19,8 @@ FROM ubuntu AS runtime
 WORKDIR /etc/snell-server
 
 COPY --from=download /tmp/snell-server /usr/bin/snell-server
+COPY entrypoint.sh /usr/bin/entrypoint.sh
 
-ENTRYPOINT ["/usr/bin/snell-server", "-c", "/etc/snell-server/snell-server.conf"]
+RUN chmod +x /usr/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
