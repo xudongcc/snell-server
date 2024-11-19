@@ -1,0 +1,14 @@
+apiVersion: v2
+
+appVersion: 4.1.1
+
+name: snell-server
+
+version: 0.0.1
+
+dependencies:
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+      - bitnami-common
+    version: 2.x.x

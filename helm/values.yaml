@@ -1,0 +1,45 @@
+snellServer:
+  image:
+    registry: ghcr.io
+    repository: ghcr.io/xudongcc/snell-server
+    tag: 4.1.1
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  resourcesPreset: "nano"
+  resources: {}
+
+  port: 6333
+  psk: "psk"
+
+shadowTLS:
+  image:
+    registry: ghcr.io
+    repository: ghcr.io/ihciah/shadow-tls
+    tag: v0.2.25
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  resourcesPreset: "nano"
+  resources: {}
+
+  port: 8443
+  sni: "gateway.icloud.com:443"
+  password: "password"
+
+nodeSelector:
+  dedicated: proxy
+
+tolerations:
+  - key: dedicated
+    operator: Equal
+    value: proxy
+    effect: NoExecute
+
+commonLabels: {}
+
+commonAnnotations: {}
+
+podLabels: {}
+
+podAnnotations: {}

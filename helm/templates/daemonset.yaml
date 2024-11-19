@@ -1,0 +1,80 @@
+# prettier-ignore
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: DaemonSet
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+      annotations:
+        {{- if .Values.podAnnotations }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      hostNetwork: true
+      {{- include "snell-server.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: snell-server
+          image: {{ include "snell-server.image" . }}
+          imagePullPolicy: {{ .Values.snellServer.image.pullPolicy | quote }}
+          env:
+            - name: SNELL_PORT
+              value: {{ .Values.snellServer.port | quote }}
+            - name: SNELL_PSK
+              value: {{ .Values.snellServer.psk | quote }}
+          ports:
+            - name: snell-server
+              containerPort: {{ .Values.snellServer.port }}
+              hostPort: {{ .Values.snellServer.port }}
+          {{- if .Values.snellServer.resources }}
+          resources: {{- toYaml .Values.snellServer.resources | nindent 12 }}
+          {{- else if ne .Values.snellServer.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.snellServer.resourcesPreset) | nindent 12 }}
+          {{- end }}
+        - name: shadow-tls
+          image: {{ include "shadow-tls.image" . }}
+          imagePullPolicy: {{ .Values.shadowTLS.image.pullPolicy | quote }}
+          env:
+            - name: MODE
+              value: server
+            - name: V3
+              value: "1"
+            - name: FASTOPEN
+              value: "1"
+            - name: LISTEN
+              value: ::0:{{ .Values.shadowTLS.port }}
+            - name: SERVER
+              value: ::1:{{ .Values.snellServer.port }}
+            - name: TLS
+              value: {{ .Values.shadowTLS.sni | quote }}
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}
+                  key: SHADOW_TLS_PASSWORD
+          ports:
+            - name: shadow-tls
+              containerPort: {{ .Values.shadowTLS.port }}
+              hostPort: {{ .Values.shadowTLS.port }}
+          {{- if .Values.shadowTLS.resources }}
+          resources: {{- toYaml .Values.shadowTLS.resources | nindent 12 }}
+          {{- else if ne .Values.shadowTLS.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.shadowTLS.resourcesPreset) | nindent 12 }}
+          {{- end }}
