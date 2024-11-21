@@ -62,4 +62,4 @@ jobs:
 
       - name: Push Helm Chart
         run: |
-          helm push snell-server-*.tgz oci://${{ env.REGISTRY }}/${{ github.repository }}/helm-charts
+          helm push snell-server-*.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/helm-charts
