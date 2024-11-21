@@ -61,7 +61,5 @@ jobs:
           helm package ./helm
 
       - name: Push Helm Chart
-        env:
-          HELM_EXPERIMENTAL_OCI: 1
         run: |
-          helm push snell-server-*.tgz oci://ghcr.io/${{ github.repository }}/helm-charts
+          helm push snell-server-*.tgz oci://${{ env.REGISTRY }}/${{ github.repository }}/helm-charts
