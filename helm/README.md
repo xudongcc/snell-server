@@ -10,13 +10,13 @@
 2. 使用 helm 安装：
 
    ```bash
-   helm upgrade snell-server ./ \
+   helm upgrade snell-server oci://ghcr.io/xudongcc/snell-server/helm-charts \
    --install \
    --namespace snell-server \
    --create-namespace \
    --set snellServer.port=6333 \
    --set snellServer.psk=psk \
-   --set shadowTLS.port=8443 \
+   --set shadowTLS.port=443 \
    --set shadowTLS.sni=gateway.icloud.com:443 \
    --set shadowTLS.password=password
    ```
