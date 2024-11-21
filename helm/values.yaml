@@ -23,7 +23,7 @@ shadowTLS:
   resourcesPreset: "nano"
   resources: {}
 
-  port: 8443
+  port: 443
   sni: "gateway.icloud.com:443"
   password: "password"
 
