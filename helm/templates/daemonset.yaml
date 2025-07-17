@@ -40,11 +40,11 @@ spec:
             - name: SNELL_PSK
               value: {{ .Values.snellServer.psk | quote }}
           ports:
-            - name: snell-server-tcp
+            - name: tcp-{{ .Values.snellServer.port }}
               containerPort: {{ .Values.snellServer.port }}
               hostPort: {{ .Values.snellServer.port }}
               protocol: TCP
-            - name: snell-server-udp
+            - name: udp-{{ .Values.snellServer.port }}
               containerPort: {{ .Values.snellServer.port }}
               hostPort: {{ .Values.snellServer.port }}
               protocol: UDP
@@ -75,11 +75,11 @@ spec:
                   name: {{ include "common.names.fullname" . }}
                   key: SHADOW_TLS_PASSWORD
           ports:
-            - name: shadow-tls-tcp
+            - name: tcp-{{ .Values.shadowTLS.port }}
               containerPort: {{ .Values.shadowTLS.port }}
               hostPort: {{ .Values.shadowTLS.port }}
               protocol: TCP
-            - name: shadow-tls-udp
+            - name: udp-{{ .Values.shadowTLS.port }}
               containerPort: {{ .Values.shadowTLS.port }}
               hostPort: {{ .Values.shadowTLS.port }}
               protocol: UDP
