@@ -40,9 +40,14 @@ spec:
             - name: SNELL_PSK
               value: {{ .Values.snellServer.psk | quote }}
           ports:
-            - name: snell-server
+            - name: snell-server-tcp
               containerPort: {{ .Values.snellServer.port }}
               hostPort: {{ .Values.snellServer.port }}
+              protocol: TCP
+            - name: snell-server-udp
+              containerPort: {{ .Values.snellServer.port }}
+              hostPort: {{ .Values.snellServer.port }}
+              protocol: UDP
           {{- if .Values.snellServer.resources }}
           resources: {{- toYaml .Values.snellServer.resources | nindent 12 }}
           {{- else if ne .Values.snellServer.resourcesPreset "none" }}
@@ -70,9 +75,14 @@ spec:
                   name: {{ include "common.names.fullname" . }}
                   key: SHADOW_TLS_PASSWORD
           ports:
-            - name: shadow-tls
+            - name: shadow-tls-tcp
               containerPort: {{ .Values.shadowTLS.port }}
               hostPort: {{ .Values.shadowTLS.port }}
+              protocol: TCP
+            - name: shadow-tls-udp
+              containerPort: {{ .Values.shadowTLS.port }}
+              hostPort: {{ .Values.shadowTLS.port }}
+              protocol: UDP
           {{- if .Values.shadowTLS.resources }}
           resources: {{- toYaml .Values.shadowTLS.resources | nindent 12 }}
           {{- else if ne .Values.shadowTLS.resourcesPreset "none" }}
