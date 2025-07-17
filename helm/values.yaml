@@ -9,7 +9,7 @@ snellServer:
   resourcesPreset: "nano"
   resources: {}
 
-  port: 6333
+  port: 8443
   psk: "psk"
 
 shadowTLS:
