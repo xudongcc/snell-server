@@ -42,11 +42,9 @@ spec:
           ports:
             - name: tcp-{{ .Values.snellServer.port }}
               containerPort: {{ .Values.snellServer.port }}
-              hostPort: {{ .Values.snellServer.port }}
               protocol: TCP
             - name: udp-{{ .Values.snellServer.port }}
               containerPort: {{ .Values.snellServer.port }}
-              hostPort: {{ .Values.snellServer.port }}
               protocol: UDP
           {{- if .Values.snellServer.resources }}
           resources: {{- toYaml .Values.snellServer.resources | nindent 12 }}
@@ -77,11 +75,9 @@ spec:
           ports:
             - name: tcp-{{ .Values.shadowTLS.port }}
               containerPort: {{ .Values.shadowTLS.port }}
-              hostPort: {{ .Values.shadowTLS.port }}
               protocol: TCP
             - name: udp-{{ .Values.shadowTLS.port }}
               containerPort: {{ .Values.shadowTLS.port }}
-              hostPort: {{ .Values.shadowTLS.port }}
               protocol: UDP
           {{- if .Values.shadowTLS.resources }}
           resources: {{- toYaml .Values.shadowTLS.resources | nindent 12 }}
