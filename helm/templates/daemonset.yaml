@@ -22,7 +22,6 @@ spec:
         {{- end }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
-      hostNetwork: true
       {{- include "snell-server.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
@@ -40,11 +39,9 @@ spec:
             - name: SNELL_PSK
               value: {{ .Values.snellServer.psk | quote }}
           ports:
-            - name: tcp-{{ .Values.snellServer.port }}
+            - name: snell-server
               containerPort: {{ .Values.snellServer.port }}
-              protocol: TCP
-            - name: udp-{{ .Values.snellServer.port }}
-              containerPort: {{ .Values.snellServer.port }}
+              hostPort: 443
               protocol: UDP
           {{- if .Values.snellServer.resources }}
           resources: {{- toYaml .Values.snellServer.resources | nindent 12 }}
@@ -73,12 +70,10 @@ spec:
                   name: {{ include "common.names.fullname" . }}
                   key: SHADOW_TLS_PASSWORD
           ports:
-            - name: tcp-{{ .Values.shadowTLS.port }}
+            - name: shadow-tls
               containerPort: {{ .Values.shadowTLS.port }}
+              hostPort: 443
               protocol: TCP
-            - name: udp-{{ .Values.shadowTLS.port }}
-              containerPort: {{ .Values.shadowTLS.port }}
-              protocol: UDP
           {{- if .Values.shadowTLS.resources }}
           resources: {{- toYaml .Values.shadowTLS.resources | nindent 12 }}
           {{- else if ne .Values.shadowTLS.resourcesPreset "none" }}
