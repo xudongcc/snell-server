@@ -9,10 +9,11 @@ snellServer:
   resourcesPreset: "nano"
   resources: {}
 
-  port: 8443
+  port: 443
   psk: "psk"
 
 shadowTLS:
+  enabled: false
   image:
     registry: ghcr.io
     repository: ghcr.io/ihciah/shadow-tls

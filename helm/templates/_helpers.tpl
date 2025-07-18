@@ -3,7 +3,11 @@
 {{- end -}}
 
 {{- define "snell-server.imagePullSecrets" -}}
-{{ include "common.images.renderPullSecrets" (dict "images" (list .Values.snellServer.image .Values.shadowTLS.image) "context" $) }}
+{{- $images := list .Values.snellServer.image -}}
+{{- if .Values.shadowTLS.enabled -}}
+{{- $images = append $images .Values.shadowTLS.image -}}
+{{- end -}}
+{{ include "common.images.renderPullSecrets" (dict "images" $images "context" $) }}
 {{- end -}}
 
 {{- define "shadow-tls.image" -}}
