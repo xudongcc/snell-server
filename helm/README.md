@@ -10,7 +10,7 @@
 2. 使用 helm 安装：
 
    ```bash
-   helm upgrade snell-server oci://ghcr.io/xudongcc/snell-server/helm-charts \
+   helm upgrade snell-server oci://ghcr.io/xudongcc/helm-charts/snell-server \
    --install \
    --namespace snell-server \
    --create-namespace \
