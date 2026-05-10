@@ -16,6 +16,7 @@
    --create-namespace \
    --set snellServer.port=6333 \
    --set snellServer.psk=psk \
+   --set shadowTLS.enabled=true \
    --set shadowTLS.port=443 \
    --set shadowTLS.sni=gateway.icloud.com:443 \
    --set shadowTLS.password=password
