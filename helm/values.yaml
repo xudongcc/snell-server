@@ -9,6 +9,7 @@ snellServer:
   resourcesPreset: "nano"
   resources: {}
 
+  host: "::0"
   port: 443
   psk: "psk"
 

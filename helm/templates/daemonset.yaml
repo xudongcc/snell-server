@@ -36,6 +36,8 @@ spec:
           image: {{ include "snell-server.image" . }}
           imagePullPolicy: {{ .Values.snellServer.image.pullPolicy | quote }}
           env:
+            - name: SNELL_HOST
+              value: {{ .Values.snellServer.host | quote }}
             - name: SNELL_PORT
               value: {{ .Values.snellServer.port | quote }}
             - name: SNELL_PSK
