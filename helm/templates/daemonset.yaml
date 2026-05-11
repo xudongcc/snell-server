@@ -23,6 +23,7 @@ spec:
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       {{- include "snell-server.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
