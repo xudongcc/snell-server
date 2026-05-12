@@ -6,7 +6,7 @@ snellServer:
     pullPolicy: IfNotPresent
     pullSecrets: []
 
-  resourcesPreset: "nano"
+  resourcesPreset: "micro"
   resources: {}
 
   host: "::0"
@@ -22,7 +22,7 @@ shadowTLS:
     pullPolicy: IfNotPresent
     pullSecrets: []
 
-  resourcesPreset: "nano"
+  resourcesPreset: "micro"
   resources: {}
 
   port: 443
