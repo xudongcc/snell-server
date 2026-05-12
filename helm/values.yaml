@@ -29,14 +29,9 @@ shadowTLS:
   sni: "gateway.icloud.com:443"
   password: "password"
 
-nodeSelector:
-  dedicated: proxy
+nodeSelector: {}
 
-tolerations:
-  - key: dedicated
-    operator: Equal
-    value: proxy
-    effect: NoExecute
+tolerations: []
 
 commonLabels: {}
 
