@@ -6,6 +6,8 @@ from pathlib import Path
 
 
 DEPENDENCY_BUILT = False
+SNELL_VERSION = "5.0.1"
+CHART_VERSION = "0.0.2"
 
 
 def ensure_dependencies():
@@ -82,6 +84,44 @@ def env_value(container, name):
 
 
 class HelmRenderTest(unittest.TestCase):
+    def test_release_version_references_are_current(self):
+        chart_app_version = subprocess.run(
+            ["yq", ".appVersion", "helm/Chart.yaml"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        chart_version = subprocess.run(
+            ["yq", ".version", "helm/Chart.yaml"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        values_image_tag = subprocess.run(
+            ["yq", ".snellServer.image.tag", "helm/values.yaml"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        workflow_matrix_version = subprocess.run(
+            ["yq", ".jobs.build.strategy.matrix.version[0]", ".github/workflows/ci.yml"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(chart_app_version.stdout.strip(), SNELL_VERSION)
+        self.assertEqual(chart_version.stdout.strip(), CHART_VERSION)
+        self.assertEqual(values_image_tag.stdout.strip(), SNELL_VERSION)
+        self.assertEqual(workflow_matrix_version.stdout.strip(), SNELL_VERSION)
+        self.assertIn(
+            f"ARG VERSION={SNELL_VERSION}", Path("Dockerfile").read_text()
+        )
+        self.assertIn(
+            "helm package ./helm --dependency-update",
+            Path(".github/workflows/ci.yml").read_text(),
+        )
+
     def test_values_do_not_duplicate_traefik_host_sni_default(self):
         result = subprocess.run(
             ["yq", ".traefik.ingressRouteTCP | has(\"hostSNI\")", "helm/values.yaml"],

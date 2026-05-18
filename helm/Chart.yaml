@@ -1,10 +1,10 @@
 apiVersion: v2
 
-appVersion: 5.0.0
+appVersion: 5.0.1
 
 name: snell-server
 
-version: 0.0.1
+version: 0.0.2
 
 dependencies:
   - name: common

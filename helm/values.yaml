@@ -2,7 +2,7 @@ snellServer:
   image:
     registry: ghcr.io
     repository: xudongcc/snell-server
-    tag: 5.0.0
+    tag: 5.0.1
     pullPolicy: IfNotPresent
     pullSecrets: []
 

@@ -14,7 +14,7 @@ jobs:
   build:
     strategy:
       matrix:
-        version: [5.0.0]
+        version: [5.0.1]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,7 +58,7 @@ jobs:
 
       - name: Package Helm Chart
         run: |
-          helm package ./helm
+          helm package ./helm --dependency-update
 
       - name: Push Helm Chart
         run: |
