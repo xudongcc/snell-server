@@ -5,6 +5,9 @@
 # Chart dependencies
 **/charts/*.tgz
 
+### Python ###
+__pycache__/
+
 ### macOS ###
 # General
 .DS_Store

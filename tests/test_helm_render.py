@@ -7,7 +7,7 @@ from pathlib import Path
 
 DEPENDENCY_BUILT = False
 SNELL_VERSION = "5.0.1"
-CHART_VERSION = "0.0.2"
+CHART_VERSION = "0.0.3"
 
 
 def ensure_dependencies():
@@ -151,7 +151,7 @@ class HelmRenderTest(unittest.TestCase):
         shadow_tls = container_by_name(pod_spec, "shadow-tls")
 
         self.assertFalse(pod_spec["hostNetwork"])
-        self.assertEqual(pod_spec["dnsPolicy"], "ClusterFirst")
+        self.assertEqual(pod_spec["dnsPolicy"], "Default")
         self.assertEqual(env_value(snell_server, "SNELL_PORT"), "6333")
         self.assertEqual(env_value(shadow_tls, "LISTEN"), "::0:8443")
         self.assertEqual(env_value(shadow_tls, "SERVER"), "::1:6333")

@@ -32,7 +32,7 @@ shadowTLS:
 
 hostNetwork: false
 
-dnsPolicy: ClusterFirst
+dnsPolicy: Default
 
 service:
   enabled: true
