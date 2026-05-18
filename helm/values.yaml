@@ -10,14 +10,14 @@ snellServer:
   resources: {}
 
   host: "::0"
-  port: 443
-  psk: "psk"
+  port: 6333
+  psk: "changeme"
 
 shadowTLS:
-  enabled: false
+  enabled: true
   image:
     registry: ghcr.io
-    repository: ghcr.io/ihciah/shadow-tls
+    repository: ihciah/shadow-tls
     tag: v0.2.25
     pullPolicy: IfNotPresent
     pullSecrets: []
@@ -25,9 +25,41 @@ shadowTLS:
   resourcesPreset: "micro"
   resources: {}
 
-  port: 443
-  sni: "gateway.icloud.com:443"
-  password: "password"
+  port: 8443
+  fastOpen: "1"
+  sni: "gateway.icloud.com"
+  password: "changeme"
+
+hostNetwork: false
+
+dnsPolicy: ClusterFirst
+
+service:
+  enabled: true
+  type: ClusterIP
+  annotations: {}
+  labels: {}
+  clusterIP: ""
+  internalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
+  sessionAffinity: None
+  sessionAffinityConfig: {}
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+    - IPv4
+  extraPorts: []
+
+traefik:
+  ingressRouteTCP:
+    enabled: true
+    name: ""
+    annotations: {}
+    labels: {}
+    entryPoints:
+      - websecure
+    nativeLB: true
+    tls:
+      passthrough: true
 
 nodeSelector: {}
 

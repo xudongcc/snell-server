@@ -13,3 +13,19 @@
 {{- define "shadow-tls.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.shadowTLS.image "global" .Values.global) }}
 {{- end -}}
+
+{{- define "snell-server.hostSNI" -}}
+{{- if .Values.traefik.ingressRouteTCP.hostSNI -}}
+{{- tpl .Values.traefik.ingressRouteTCP.hostSNI $ -}}
+{{- else -}}
+{{- tpl .Values.shadowTLS.sni $ -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "snell-server.ingressRouteTCPName" -}}
+{{- if .Values.traefik.ingressRouteTCP.name -}}
+{{- tpl .Values.traefik.ingressRouteTCP.name $ -}}
+{{- else -}}
+{{- printf "%s-%d" (include "common.names.fullname" .) (int .Values.shadowTLS.port) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}

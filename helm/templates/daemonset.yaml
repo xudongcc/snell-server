@@ -22,8 +22,8 @@ spec:
         {{- end }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
       {{- include "snell-server.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
@@ -64,7 +64,7 @@ spec:
             - name: V3
               value: "1"
             - name: FASTOPEN
-              value: "1"
+              value: {{ .Values.shadowTLS.fastOpen | quote }}
             - name: LISTEN
               value: ::0:{{ .Values.shadowTLS.port }}
             - name: SERVER

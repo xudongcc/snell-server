@@ -1,0 +1,25 @@
+# prettier-ignore
+
+{{- if and .Values.traefik.ingressRouteTCP.enabled .Values.service.enabled .Values.shadowTLS.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: {{ include "snell-server.ingressRouteTCPName" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.traefik.ingressRouteTCP.labels .Values.commonLabels ) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.traefik.ingressRouteTCP.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.traefik.ingressRouteTCP.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints: {{- toYaml .Values.traefik.ingressRouteTCP.entryPoints | nindent 4 }}
+  routes:
+    - match: HostSNI(`{{ include "snell-server.hostSNI" . }}`)
+      services:
+        - name: {{ include "common.names.fullname" . }}
+          port: {{ .Values.shadowTLS.port }}
+          nativeLB: {{ .Values.traefik.ingressRouteTCP.nativeLB }}
+  tls:
+    passthrough: {{ .Values.traefik.ingressRouteTCP.tls.passthrough }}
+{{- end }}
