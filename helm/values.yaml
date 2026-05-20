@@ -9,7 +9,7 @@ snellServer:
   resourcesPreset: "micro"
   resources: {}
 
-  host: "::0"
+  host: "::1"
   port: 6333
   psk: "changeme"
 
@@ -26,16 +26,19 @@ shadowTLS:
   resources: {}
 
   port: 8443
+  listenHost: "::0"
+  serverHost: "::1"
   fastOpen: "1"
   sni: "gateway.icloud.com"
   password: "changeme"
 
-hostNetwork: false
+hostNetwork: true
 
 dnsPolicy: Default
 
 service:
   enabled: true
+  exposeSnellServer: false
   type: ClusterIP
   annotations: {}
   labels: {}

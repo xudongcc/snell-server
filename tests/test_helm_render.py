@@ -142,7 +142,7 @@ class HelmRenderTest(unittest.TestCase):
             b64decode(secret["data"]["SHADOW_TLS_PASSWORD"]).decode(), "changeme"
         )
 
-    def test_daemonset_defaults_to_pod_network_with_expected_ports(self):
+    def test_daemonset_defaults_to_host_network_with_expected_ports(self):
         manifests = render_chart()
 
         daemonset = by_kind_name(manifests, "DaemonSet", "snell-server")
@@ -150,8 +150,9 @@ class HelmRenderTest(unittest.TestCase):
         snell_server = container_by_name(pod_spec, "snell-server")
         shadow_tls = container_by_name(pod_spec, "shadow-tls")
 
-        self.assertFalse(pod_spec["hostNetwork"])
+        self.assertTrue(pod_spec["hostNetwork"])
         self.assertEqual(pod_spec["dnsPolicy"], "Default")
+        self.assertEqual(env_value(snell_server, "SNELL_HOST"), "::1")
         self.assertEqual(env_value(snell_server, "SNELL_PORT"), "6333")
         self.assertEqual(env_value(shadow_tls, "LISTEN"), "::0:8443")
         self.assertEqual(env_value(shadow_tls, "SERVER"), "::1:6333")
@@ -186,6 +187,12 @@ class HelmRenderTest(unittest.TestCase):
                 "app.kubernetes.io/instance": "snell-server",
                 "app.kubernetes.io/name": "snell-server",
             },
+        )
+        self.assertNotIn(
+            "tcp-6333", [port["name"] for port in service["spec"]["ports"]]
+        )
+        self.assertNotIn(
+            "udp-6333", [port["name"] for port in service["spec"]["ports"]]
         )
         self.assertIn(
             {

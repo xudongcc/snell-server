@@ -36,6 +36,7 @@ spec:
   ipFamilies: {{- toYaml .Values.service.ipFamilies | nindent 4 }}
   {{- end }}
   ports:
+    {{- if .Values.service.exposeSnellServer }}
     - name: tcp-{{ .Values.snellServer.port }}
       port: {{ .Values.snellServer.port }}
       targetPort: tcp-{{ .Values.snellServer.port }}
@@ -44,6 +45,7 @@ spec:
       port: {{ .Values.snellServer.port }}
       targetPort: udp-{{ .Values.snellServer.port }}
       protocol: UDP
+    {{- end }}
     {{- if .Values.shadowTLS.enabled }}
     - name: shadow-tls
       port: {{ .Values.shadowTLS.port }}

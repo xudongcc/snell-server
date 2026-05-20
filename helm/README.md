@@ -1,15 +1,16 @@
 # snell-server Helm Chart
 
-这个 chart 会部署一个 DaemonSet，每个节点运行 `snell-server` 和 `shadow-tls` 两个容器。默认不使用 `hostNetwork`，通过 ClusterIP Service 和 Traefik `IngressRouteTCP` 暴露 `shadow-tls`。
+这个 chart 会部署一个 DaemonSet，每个节点运行 `snell-server` 和 `shadow-tls` 两个容器。默认使用 `hostNetwork`，`snell-server` 只监听本机回环地址，`shadow-tls` 监听宿主机端口并继续通过 ClusterIP Service 和 Traefik `IngressRouteTCP` 暴露。
 
 ## 默认行为
 
-- `snell-server` 监听 `::0:6333`
+- `hostNetwork` 默认启用，`dnsPolicy` 使用 `Default`
+- `snell-server` 监听 `::1:6333`
 - `shadow-tls` 监听 `::0:8443`
-- `shadow-tls` 转发到同一个 Pod 内的 `::1:6333`
+- `shadow-tls` 转发到同一个宿主机网络命名空间内的 `::1:6333`
 - `shadowTLS.sni` 默认为 `gateway.icloud.com`
 - Traefik `HostSNI` 默认跟随 `shadowTLS.sni`
-- Service 使用 `internalTrafficPolicy: Local`
+- Service 默认只暴露 `shadow-tls` 端口，并使用 `internalTrafficPolicy: Local`
 - Traefik backend 使用 `nativeLB: true`
 
 ## 安装

@@ -66,9 +66,9 @@ spec:
             - name: FASTOPEN
               value: {{ .Values.shadowTLS.fastOpen | quote }}
             - name: LISTEN
-              value: ::0:{{ .Values.shadowTLS.port }}
+              value: {{ printf "%s:%d" .Values.shadowTLS.listenHost (int .Values.shadowTLS.port) | quote }}
             - name: SERVER
-              value: ::1:{{ .Values.snellServer.port }}
+              value: {{ printf "%s:%d" .Values.shadowTLS.serverHost (int .Values.snellServer.port) | quote }}
             - name: TLS
               value: {{ .Values.shadowTLS.sni | quote }}
             - name: PASSWORD
