@@ -32,7 +32,7 @@ shadowTLS:
   sni: "gateway.icloud.com"
   password: "changeme"
 
-hostNetwork: true
+hostNetwork: false
 
 dnsPolicy: Default
 
