@@ -7,7 +7,7 @@ from pathlib import Path
 
 DEPENDENCY_BUILT = False
 SNELL_VERSION = "5.0.1"
-CHART_VERSION = "0.0.3"
+CHART_VERSION = "0.0.4"
 
 
 def ensure_dependencies():
@@ -142,7 +142,7 @@ class HelmRenderTest(unittest.TestCase):
             b64decode(secret["data"]["SHADOW_TLS_PASSWORD"]).decode(), "changeme"
         )
 
-    def test_daemonset_defaults_to_host_network_with_expected_ports(self):
+    def test_daemonset_defaults_to_pod_network_with_expected_ports(self):
         manifests = render_chart()
 
         daemonset = by_kind_name(manifests, "DaemonSet", "snell-server")
@@ -150,7 +150,7 @@ class HelmRenderTest(unittest.TestCase):
         snell_server = container_by_name(pod_spec, "snell-server")
         shadow_tls = container_by_name(pod_spec, "shadow-tls")
 
-        self.assertTrue(pod_spec["hostNetwork"])
+        self.assertFalse(pod_spec["hostNetwork"])
         self.assertEqual(pod_spec["dnsPolicy"], "Default")
         self.assertEqual(env_value(snell_server, "SNELL_HOST"), "::1")
         self.assertEqual(env_value(snell_server, "SNELL_PORT"), "6333")
@@ -158,6 +158,9 @@ class HelmRenderTest(unittest.TestCase):
         self.assertEqual(env_value(shadow_tls, "SERVER"), "::1:6333")
         self.assertEqual(env_value(shadow_tls, "TLS"), "gateway.icloud.com")
         self.assertEqual(env_value(shadow_tls, "FASTOPEN"), "1")
+        self.assertEqual(
+            env_value(shadow_tls, "MONOIO_FORCE_LEGACY_DRIVER"), "1"
+        )
         self.assertIn(
             {"name": "tcp-6333", "containerPort": 6333, "protocol": "TCP"},
             snell_server["ports"],
@@ -169,6 +172,21 @@ class HelmRenderTest(unittest.TestCase):
         self.assertIn(
             {"name": "shadow-tls", "containerPort": 8443, "protocol": "TCP"},
             shadow_tls["ports"],
+        )
+
+    def test_shadow_tls_can_use_io_uring(self):
+        manifests = render_chart(
+            ["--set", "shadowTLS.forceLegacyDriver=false"]
+        )
+
+        daemonset = by_kind_name(manifests, "DaemonSet", "snell-server")
+        shadow_tls = container_by_name(
+            daemonset["spec"]["template"]["spec"], "shadow-tls"
+        )
+
+        self.assertNotIn(
+            "MONOIO_FORCE_LEGACY_DRIVER",
+            [env["name"] for env in shadow_tls["env"]],
         )
 
     def test_service_routes_shadowtls_through_traefik(self):

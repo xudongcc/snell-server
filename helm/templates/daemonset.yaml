@@ -63,6 +63,10 @@ spec:
               value: server
             - name: V3
               value: "1"
+            {{- if .Values.shadowTLS.forceLegacyDriver }}
+            - name: MONOIO_FORCE_LEGACY_DRIVER
+              value: "1"
+            {{- end }}
             - name: FASTOPEN
               value: {{ .Values.shadowTLS.fastOpen | quote }}
             - name: LISTEN

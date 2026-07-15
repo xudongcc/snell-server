@@ -4,7 +4,7 @@ appVersion: 5.0.1
 
 name: snell-server
 
-version: 0.0.3
+version: 0.0.4
 
 dependencies:
   - name: common

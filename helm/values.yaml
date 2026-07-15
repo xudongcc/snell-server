@@ -15,6 +15,7 @@ snellServer:
 
 shadowTLS:
   enabled: true
+  forceLegacyDriver: true
   image:
     registry: ghcr.io
     repository: ihciah/shadow-tls
