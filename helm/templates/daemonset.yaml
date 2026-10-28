@@ -36,12 +36,24 @@ spec:
           image: {{ include "snell-server.image" . }}
           imagePullPolicy: {{ .Values.snellServer.image.pullPolicy | quote }}
           env:
-            - name: SNELL_HOST
-              value: {{ .Values.snellServer.host | quote }}
-            - name: SNELL_PORT
-              value: {{ .Values.snellServer.port | quote }}
+            - name: SNELL_LISTEN
+              value: {{ default (printf "[::1]:%d" (int .Values.snellServer.port)) .Values.snellServer.listen | quote }}
             - name: SNELL_PSK
               value: {{ .Values.snellServer.psk | quote }}
+            - name: SNELL_MODE
+              value: {{ .Values.snellServer.mode | quote }}
+            {{- if .Values.snellServer.dns }}
+            - name: SNELL_DNS
+              value: {{ .Values.snellServer.dns | quote }}
+            {{- end }}
+            {{- if .Values.snellServer.dnsIpPreference }}
+            - name: SNELL_DNS_IP_PREFERENCE
+              value: {{ .Values.snellServer.dnsIpPreference | quote }}
+            {{- end }}
+            {{- if .Values.snellServer.egressInterface }}
+            - name: SNELL_EGRESS_INTERFACE
+              value: {{ .Values.snellServer.egressInterface | quote }}
+            {{- end }}
           ports:
             - name: tcp-{{ .Values.snellServer.port }}
               containerPort: {{ .Values.snellServer.port }}

@@ -2,16 +2,24 @@ snellServer:
   image:
     registry: ghcr.io
     repository: xudongcc/snell-server
-    tag: 5.0.1
+    tag: 6.0.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 
   resourcesPreset: "micro"
   resources: {}
 
-  host: "::1"
-  port: 6333
-  psk: "changeme"
+  # 用于声明容器和 Service 端口。
+  port: 7177
+  # 必须为 12–255 字节；部署时请替换为随机密钥。
+  psk: "please-change-me"
+  # 完整监听地址列表；为空时使用 [::1]:<port>，自定义地址端口需与 port 保持一致。
+  listen: ""
+  mode: "default"
+  dns: ""
+  # 为空时使用上游默认值。
+  dnsIpPreference: ""
+  egressInterface: ""
 
 shadowTLS:
   enabled: true

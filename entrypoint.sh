@@ -1,22 +1,26 @@
 #!/bin/bash
 
-# 仅在未设置 SNELL_HOST 时设置默认值
-if [ -z "${SNELL_HOST}" ]; then
-    SNELL_HOST="::0"
-
-    # 根据 SNELL_IPV6 设置正确的监听地址
-    if [ "${SNELL_IPV6:-true}" = "false" ]; then
-        SNELL_HOST="0.0.0.0"
-    fi
-fi
+set -e
 
 # 生成配置文件
 cat > /etc/snell-server/snell-server.conf << EOF
 [snell-server]
-listen = ${SNELL_HOST}:${SNELL_PORT:-6333}
+listen = ${SNELL_LISTEN:-0.0.0.0:7177,[::]:7177}
 psk = ${SNELL_PSK:-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}
-ipv6 = ${SNELL_IPV6:-true}
+mode = ${SNELL_MODE:-default}
 EOF
+
+if [ -n "${SNELL_DNS:-}" ]; then
+    printf 'dns = %s\n' "${SNELL_DNS}" >> /etc/snell-server/snell-server.conf
+fi
+
+if [ -n "${SNELL_DNS_IP_PREFERENCE:-}" ]; then
+    printf 'dns-ip-preference = %s\n' "${SNELL_DNS_IP_PREFERENCE}" >> /etc/snell-server/snell-server.conf
+fi
+
+if [ -n "${SNELL_EGRESS_INTERFACE:-}" ]; then
+    printf 'egress-interface = %s\n' "${SNELL_EGRESS_INTERFACE}" >> /etc/snell-server/snell-server.conf
+fi
 
 # 显示生成的 PSK
 if [ -z "${SNELL_PSK}" ]; then
